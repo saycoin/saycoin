@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>세이코인 가맹점 출금 시스템 — 프리미엄 가이드 (리디자인)</title>
+  <meta name="color-scheme" content="dark light" />
+  <style>
+    /* ===== THEME TOKENS ===== */
+    :root{
+      --bg:#ffffff; --fg:#0b1220; --muted:#475569; --border:#e2e8f0;
+      --panel:#ffffff; --panel-2:#f6f8fd;
+      --blue:#2563eb; --blue-600:#1e40af; --mint:#10b981; --violet:#7c3aed;
+      --rose:#dc2626; --amber:#d97706; --lime:#15803d;
+      --shadow:0 16px 40px rgba(2,6,23,.08);
+      --radius-1:12px; --radius-2:18px; --radius-3:28px;
+      --hero-grad:radial-gradient(900px 520px at 0% 0%, #4f79d61a 0%, transparent 60%),
+        radial-gradient(900px 520px at 100% 0%, #21bcd61a 0%, transparent 60%),
+        linear-gradient(180deg,#ffffff 0%, #f4f7fe 100%);
+    }
+    [data-theme="dark"]{
+      --bg:#0b0f1a; --fg:#e9eef6; --muted:#a8b3c5; --border:#20304d;
+      --panel:#101728; --panel-2:#0d1423;
+      --blue:#60a5fa; --blue-600:#2563eb; --mint:#34d399; --violet:#8b5cf6;
+      --rose:#ef4444; --amber:#f59e0b; --lime:#a3e635;
+      --shadow:0 20px 60px rgba(0,0,0,.45);
+      --hero-grad:radial-gradient(1100px 560px at 0% 0%, #4f79d633 0%, transparent 60%),
+        radial-gradient(1000px 560px at 100% 0%, #21bcd633 0%, transparent 60%),
+        linear-gradient(180deg,#0b1633 0%, #0b0f1a 100%);
+    }
+    *{box-sizing:border-box; color:inherit}
+    body{margin:0; background:var(--bg); color:var(--fg); font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Segoe UI",Roboto,Helvetica,Arial,"맑은 고딕","Malgun Gothic",sans-serif; line-height:1.65}
+    a{color:var(--blue); text-decoration:none; font-weight:700}
+    .wrap{max-width:1200px; margin:0 auto; padding:24px}
+    h1,h2,h3{margin:0 0 8px; color:var(--fg)}
+    .appbar{position:sticky; top:0; z-index:20; backdrop-filter:saturate(130%) blur(8px); background:linear-gradient(180deg, color-mix(in oklab, var(--bg) 80%, #000 20%), transparent); border-bottom:1px solid var(--border)}
+    .appbar .inner{display:flex; align-items:center; gap:14px; padding:14px 24px}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:900}
+    .brand .logo{width:34px; height:34px; display:grid; place-items:center; border-radius:9px; background:linear-gradient(135deg,var(--blue),var(--violet)); color:#fff; box-shadow:var(--shadow)}
+    .spacer{flex:1}
+    .btn{display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:10px; font-weight:800; border:1px solid var(--border); background:var(--panel)}
+    .btn.primary{background:linear-gradient(135deg,var(--blue),var(--blue-600)); color:#fff; border-color:var(--blue-600)}
+    .theme-toggle{border:1px solid var(--border); background:var(--panel); border-radius:999px; padding:6px}
+    .theme-toggle button{all:unset; cursor:pointer; padding:8px 12px; border-radius:999px; font-weight:900}
+    .theme-toggle button[aria-pressed="true"]{background:var(--blue); color:#fff}
+    .hero{margin:16px 0 0; border:1px solid var(--border); border-radius:var(--radius-3); background:var(--hero-grad); box-shadow:var(--shadow); overflow:hidden}
+    .hero .inner{display:grid; grid-template-columns:1.2fr .8fr; gap:28px; padding:48px 30px}
+    @media(max-width:980px){.hero .inner{grid-template-columns:1fr}}
+    .kicker{display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; background:linear-gradient(135deg,#fcd34d,#fde68a); color:#111827; font-weight:900; font-size:12px; margin-bottom:12px}
+    .sub{margin:12px 0 18px; font-size:clamp(15px,1.8vw,19px); font-weight:600}
+    .cta{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    .card{border:1px solid var(--border); border-radius:var(--radius-2); background:linear-gradient(180deg,var(--panel-2),var(--panel)); box-shadow:var(--shadow)}
+    .card .pad{padding:20px}
+    .stats{border-radius:18px}
+    .stat-row{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:12px; border:1px solid var(--border); background:color-mix(in oklab, var(--panel) 85%, #000 15%)}
+    .stat-row + .stat-row{margin-top:10px}
+    .tag{font-weight:900}
+    .pos{margin-left:auto; font-weight:900; color:var(--mint)}
+    section{margin-top:38px}
+    .flow{display:flex; gap:14px; overflow:auto; padding:18px; border-radius:18px; border:1px dashed var(--border); background:color-mix(in oklab, var(--panel) 92%, #000 8%)}
+    .step{min-width:320px; padding:18px; border:1px solid var(--border); border-radius:16px; background:color-mix(in oklab, var(--panel) 90%, #000 10%)}
+    .step .k{font-size:12px; font-weight:900; color:var(--blue)}
+    .arrow{align-self:center; font-weight:900; color:var(--amber); min-width:28px}
+    .li{display:flex; gap:12px; margin:12px 0; align-items:flex-start}
+    .ico{width:36px; height:36px; display:grid; place-items:center; border-radius:10px; border:1px solid var(--border); background:color-mix(in oklab, var(--panel) 88%, #000 12%)}
+    .txt{flex:1}
+    .callout{padding:16px; border:1px solid var(--border); border-radius:14px; background:color-mix(in oklab, var(--panel) 90%, #000 10%)}
+    footer{margin:40px 0 16px; color:var(--muted); font-size:12px; text-align:center}
+  </style>
+</head>
+<body>
+  <header class="appbar" role="banner">
+    <div class="inner wrap">
+      <div class="brand"><div class="logo">S</div><span>세이코인 가맹점 출금 시스템</span></div>
+      <div class="spacer"></div>
+      <div class="theme-toggle" role="group" aria-label="테마 토글">
+        <button id="btnDark" aria-pressed="true">🌙</button>
+        <button id="btnLight" aria-pressed="false">☀️</button>
+        <button id="btnAuto" aria-pressed="false">🖥️</button>
+      </div>
+      <a class="btn primary" href="https://www.gate.com/signup/VLFCVLONVG?ref_type=103" target="_blank" rel="noopener">Gate.io 가입 & KYC ↗</a>
+    </div>
+  </header>
+  <main class="wrap">
+  <!-- ===== HERO ===== -->
+  <section class="hero" aria-label="프리미엄 안내"><div class="inner">
+    <div>
+      <span class="kicker">PREMIUM GUIDE</span>
+      <h1>안전한 정산 · <b>투자형 부가수익</b> · 생태계 안정성</h1>
+      <p class="sub">가맹점에 최적화된 <b>올인원 출금&정산 솔루션</b>. 글로벌 보안 표준과 국내 유동성을 한 번에.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://www.gate.com/signup/VLFCVLONVG?ref_type=103" target="_blank" rel="noopener" aria-label="Gate.io 가입 및 KYC">Gate.io 가입 & KYC ↗</a>
+        <a class="btn" href="https://saygate.io/" target="_blank" rel="noopener" aria-label="세이월렛 접속">세이월렛 접속 ↗</a>
+      </div>
+    </div>
+    <aside class="card stats" aria-label="핵심 장점 요약"><div class="pad">
+      <h3>“출금만 해도 안전, 보유만 해도 수익”</h3>
+      <div class="stat-row"><span class="tag">김치 프리미엄</span><span class="txt">국내↔해외 <b>USDT 시세 차</b> 활용</span><span class="pos">+α</span></div>
+      <div class="stat-row"><span class="tag">SAY 가치상승</span><span class="txt">보유만으로 <b>자본 이익</b> 창출</span><span class="pos">레버리지</span></div>
+      <div class="stat-row"><span class="tag">개인 월렛</span><span class="txt">외부 지갑 보관으로 <b>리스크 최소화</b></span><span class="pos">안전</span></div>
+    </div></aside>
+  </div></section>
+
+  <!-- ===== 개요 ===== -->
+  <section aria-label="핵심 포인트">
+    <h2>🔷 한눈에 보는 핵심 포인트</h2>
+    <div class="li"><div class="ico">⚡</div><div class="txt"><b>실시간 정산 & 안정적 현금화</b> — 국내 메이저 거래소/환전소 연계로 빠르고 투명한 출금.</div></div>
+    <div class="li"><div class="ico">🛡️</div><div class="txt"><b>KYC 기반 글로벌 보안</b> — Gate.io KYC로 출금 한도↑, 보안↑, 국제 규정 준수.</div></div>
+    <div class="li"><div class="ico">💹</div><div class="txt"><b>이중 수익 구조</b> — USDT 프리미엄 + SAY코인 가치상승.</div></div>
+    <div class="li"><div class="ico">🤝</div><div class="txt"><b>(주)코마컴퍼니 시세 방어</b> — 가격 안정화 정책 준수로 장기 운영 리스크 완화.</div></div>
+    <div class="li"><div class="ico">🔐</div><div class="txt"><b>자산 보호 최상위</b> — 개인 월렛 전환으로 거래소/해킹 리스크 최소화.</div></div>
+  </section>
+
+  <!-- ===== 출금 프로세스 ===== -->
+  <section aria-label="출금 프로세스">
+    <h2>🔹 1. 출금 프로세스 — 쉽고 안정적이며 표준 준수</h2>
+    <p class="muted" style="margin:0 0 12px">아래 순서대로 진행하면 원스톱으로 현금화를 완료합니다.</p>
+    <div class="flow" aria-label="출금 단계 흐름">
+      <div class="step"><div class="k">STEP 1</div><h3>Gate.io 회원가입 + KYC</h3><p>세계 상위권 거래소. KYC 완료 시 <b>출금 한도 강화</b>, <b>보안 강화</b>.</p><p style="margin-top:10px"><a href="https://www.gate.com/signup/VLFCVLONVG?ref_type=103" target="_blank" rel="noopener">가입 링크 ↗</a></p></div>
+      <div class="arrow" aria-hidden="true">➜</div>
+      <div class="step"><div class="k">STEP 2</div><h3>세이월렛 가입</h3><p>가맹점 전용 <b>실시간 모니터링 지갑</b>. 입출금 내역 즉시 확인.</p><p style="margin-top:10px"><a href="https://saygate.io/" target="_blank" rel="noopener">세이월렛 접속 ↗</a></p></div>
+      <div class="arrow" aria-hidden="true">➜</div>
+      <div class="step"><div class="k">STEP 3</div><h3>출금 절차</h3><p>① SAY → USDT 전환(Gate.io)<br>② USDT → 업비트·빗썸/환전소 송금<br>③ <b>실시간 정산</b>으로 즉시 현금화</p></div>
+    </div>
+    <div class="callout" role="note" style="margin-top:14px">
+      <div class="li"><div class="ico">ℹ️</div><div class="txt">회원 충전 → 가맹점 출금 → 현금화까지 <b>원스톱</b>. 글로벌 보안과 국내 유동성을 동시에 확보합니다.</div></div>
+    </div>
+  </section>
+
+  <!-- ===== 부가 수익 모델 ===== -->
+  <section aria-label="부가 수익 모델">
+    <h2>🔹 2. 부가 수익 모델 — 운영을 넘어 <b>투자 수익 구조</b></h2>
+    <div class="card"><div class="pad">
+      <div class="li"><div class="ico">💹</div><div class="txt"><b>김치 프리미엄 차익</b> — 국내·해외 거래소 간 USDT 가격 차를 활용한 추가 수익.</div></div>
+      <div class="li"><div class="ico">📈</div><div class="txt"><b>SAY코인 가치 상승</b> — 보유만으로 자본 이익 창출, 운영이 투자 수익으로 확장.</div></div>
+      <div class="li"><div class="ico">🔐</div><div class="txt"><b>개인 월렛 전환</b> — 거래소 이슈·해킹 리스크 최소화, 장기 보유에 최적화.</div></div>
+    </div></div>
+  </section>
+
+  <!-- ===== 협조 사항 ===== -->
+  <section aria-label="협조 사항">
+    <h2>🔹 3. 협조 사항 — 모두가 윈윈하는 생태계</h2>
+    <div class="li"><div class="ico">✅</div><div class="txt"><b>회원 지급액 이상의 SAY 보유 권장</b> — 안정적 출금 보장 → 회원 신뢰 & 브랜드 가치 상승.</div></div>
+    <div class="li"><div class="ico">🤝</div><div class="txt"><b>(주)코마컴퍼니 시세 방어 정책 준수</b> — 거래량·보유량 투명 관리로 건전한 생태계 유지.</div></div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  
+</main>
+  <footer>© 2025 SAYCOIN Merchant Guide</footer>
+  <script>
+    (function(){
+      const html=document.documentElement;
+      const btnDark=document.getElementById('btnDark');
+      const btnLight=document.getElementById('btnLight');
+      const btnAuto=document.getElementById('btnAuto');
+      function setTheme(mode){
+        if(mode==='auto'){html.removeAttribute('data-theme');} else {html.setAttribute('data-theme',mode);} localStorage.setItem('theme',mode); update(mode);
+      }
+      function update(mode){
+        btnDark.setAttribute('aria-pressed',String(mode==='dark'));
+        btnLight.setAttribute('aria-pressed',String(mode==='light'));
+        btnAuto.setAttribute('aria-pressed',String(mode==='auto'));
+      }
+      const saved=localStorage.getItem('theme'); setTheme(saved||'light');
+      btnDark.addEventListener('click',()=>setTheme('dark'));
+      btnLight.addEventListener('click',()=>setTheme('light'));
+      btnAuto.addEventListener('click',()=>setTheme('auto'));
+    })();
+  </script>
+</body>
+</html>
