@@ -73,11 +73,6 @@
     <div class="inner wrap">
       <div class="brand"><div class="logo">S</div><span>세이코인 가맹점 출금 시스템</span></div>
       <div class="spacer"></div>
-      <div class="theme-toggle" role="group" aria-label="테마 토글">
-        <button id="btnDark" aria-pressed="true">🌙</button>
-        <button id="btnLight" aria-pressed="false">☀️</button>
-        <button id="btnAuto" aria-pressed="false">🖥️</button>
-      </div>
       <a class="btn primary" href="https://www.gate.com/signup/VLFCVLONVG?ref_type=103" target="_blank" rel="noopener">Gate.io 가입 & KYC ↗</a>
     </div>
   </header>
@@ -148,25 +143,6 @@
   
 </main>
   <footer>© 2025 SAYCOIN Merchant Guide</footer>
-  <script>
-    (function(){
-      const html=document.documentElement;
-      const btnDark=document.getElementById('btnDark');
-      const btnLight=document.getElementById('btnLight');
-      const btnAuto=document.getElementById('btnAuto');
-      function setTheme(mode){
-        if(mode==='auto'){html.removeAttribute('data-theme');} else {html.setAttribute('data-theme',mode);} localStorage.setItem('theme',mode); update(mode);
-      }
-      function update(mode){
-        btnDark.setAttribute('aria-pressed',String(mode==='dark'));
-        btnLight.setAttribute('aria-pressed',String(mode==='light'));
-        btnAuto.setAttribute('aria-pressed',String(mode==='auto'));
-      }
-      const saved=localStorage.getItem('theme'); setTheme(saved||'light');
-      btnDark.addEventListener('click',()=>setTheme('dark'));
-      btnLight.addEventListener('click',()=>setTheme('light'));
-      btnAuto.addEventListener('click',()=>setTheme('auto'));
-    })();
-  </script>
+  
 </body>
 </html>
